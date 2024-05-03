@@ -4,17 +4,15 @@ interface InitialState {
 }
 
 const initialState: InitialState = {
-  userList: {},
+  userList: [],
 };
-const userNotificationSlice = createSlice({
-  name: "userNotificationSlice",
+const userSlice = createSlice({
+  name: "userSlice",
   initialState,
   reducers: {
-    userList: (state: any, { payload }) => {
-      state.userNotifications = { ...state, userList: payload };
-    },
+    setUserList: (state: any, { payload }) => ({ ...state, userList: payload }),
   },
 });
 
-export default userNotificationSlice.reducer;
-export const { userList } = userNotificationSlice.actions;
+export default userSlice.reducer;
+export const { setUserList } = userSlice.actions;

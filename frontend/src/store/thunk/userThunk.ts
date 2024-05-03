@@ -2,20 +2,28 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { addNotification } from "../slices/userNotificationSlice";
 import config from "../../config/config";
 import axios from "axios";
-// import { updateUserNotificationList } from "../slices/authSlice";
+import { setUserList } from "../slices/usersSlice";
 
 export const getUserThunk = createAsyncThunk(
   "get",
   async (_request: any, { dispatch }) => {
     try {
       axios
-      .put(`${config.url}api/users/`)
-      .then((response:any) => {
-        dispatch(addNotification({message:"User Created successfully"}))
-      })
-      .catch((error:any) => {
-        dispatch(addNotification({message:"Error while trying create a new user."}))
-      });
+        .get(`${config.url}api/users/`, {
+          headers: {
+            Authorization: "Bearer " + _request?.token,
+          },
+        })
+        .then((response: any) => {
+          dispatch(setUserList(response.data));
+        })
+        .catch((error: any) => {
+          dispatch(
+            addNotification({
+              message: "Error while trying getting users.",
+            })
+          );
+        });
     } catch (error) {}
   }
 );
@@ -25,12 +33,29 @@ export const updateUserThunk = createAsyncThunk(
   async (_request: any, { dispatch }) => {
     try {
       axios
-        .put(`${config.url}api/users/${_request.payload.id}`, _request.payload)
-        .then((response:any) => {
-          dispatch(addNotification({message:"User udpated successfully"}))
+        .put(
+          `${config.url}api/users/${_request.payload.id}`,
+          _request.payload,
+          {
+            headers: {
+              Authorization: "Bearer " + _request?.token,
+            },
+          }
+        )
+        .then((response: any) => {
+          dispatch(
+            addNotification({
+              message: "User udpated successfully",
+            })
+          );
+          dispatch(getUserThunk({ token: _request.token }));
         })
-        .catch((error:any) => {
-          dispatch(addNotification({message:"Error while trying update a new user."}))
+        .catch((error: any) => {
+          dispatch(
+            addNotification({
+              message: "Error while trying update a new user.",
+            })
+          );
         });
     } catch (error) {}
   }
@@ -41,12 +66,25 @@ export const deleteUserThunk = createAsyncThunk(
   async (_request: any, { dispatch }) => {
     try {
       axios
-        .delete(`${config.url}api/users/${_request.payload.id}`, _request.payload)
-        .then((response:any) => {
-          dispatch(addNotification({message:"User deleted successfully"}))
+        .delete(`${config.url}api/users/${_request.payload.id}`, {
+          headers: {
+            Authorization: "Bearer " + _request?.token,
+          },
         })
-        .catch((error:any) => {
-          dispatch(addNotification({message:"Error while trying delete a new user."}))
+        .then((response: any) => {
+          dispatch(
+            addNotification({
+              message: "User deleted successfully",
+            })
+          );
+          dispatch(getUserThunk({ token: _request.token }));
+        })
+        .catch((error: any) => {
+          dispatch(
+            addNotification({
+              message: "Error while trying delete a new user.",
+            })
+          );
         });
     } catch (error) {}
   }
@@ -57,15 +95,26 @@ export const addUserThunk = createAsyncThunk(
   async (_request: any, { dispatch }) => {
     try {
       axios
-        .post(`${config.url}api/users`, _request.payload)
-        .then((response:any) => {
-          dispatch(addNotification({message:"User Created successfully"}))
+        .post(`${config.url}api/users`, _request.payload, {
+          headers: {
+            Authorization: "Bearer " + _request?.token,
+          },
         })
-        .catch((error:any) => {
-          dispatch(addNotification({message:"Error while trying create a new user."}))
+        .then((response: any) => {
+          dispatch(
+            addNotification({
+              message: "User Created successfully",
+            })
+          );
+          dispatch(getUserThunk({ token: _request.token }));
+        })
+        .catch((error: any) => {
+          dispatch(
+            addNotification({
+              message: "Error while trying create a new user.",
+            })
+          );
         });
     } catch (error) {}
   }
 );
-
-

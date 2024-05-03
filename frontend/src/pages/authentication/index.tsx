@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   TextField,
@@ -9,12 +9,22 @@ import {
 } from "@mui/material";
 import { loginUserThunk } from "../../store/thunk/authThunk";
 import { useAppDispatch, useAppSelector } from "../../store/store";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {
+  const dispatch: any = useAppDispatch();
+  const navigate = useNavigate();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const dispatch = useAppDispatch();
+
+  let userToken = useAppSelector((state) => state.authSlice.userData.token);
+
+  useEffect(() => {
+    if (userToken) {
+      navigate("/users");
+    }
+  }, [userToken]);
 
   const validateForm = (): boolean => {
     const errors: { [key: string]: string } = {};

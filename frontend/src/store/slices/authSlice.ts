@@ -1,22 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 interface InitialState {
-  userNotifications: any;  
+  userNotifications: any;
   userData: any;
 }
 
-const initialState:InitialState={
-  userNotifications:{},
-  userData:{}
-}
-const userNotificationSlice = createSlice({
-  name: 'userNotificationSlice',
+const initialState: InitialState = {
+  userNotifications: {},
+  userData: {
+    token: localStorage.getItem("userToken"),
+  },
+};
+const authSlice = createSlice({
+  name: "authSlice",
   initialState,
-  reducers: {  
-    setAuthUser:(state:any,{payload})=>{
-      state.userData={...state.userData,userData:payload}
-    },
+  reducers: {
+    setAuthUser: (state: any, { payload }) => ({
+      ...state,
+      userData: payload,
+    }),
   },
 });
 
-export default userNotificationSlice.reducer;
-export const { setAuthUser } = userNotificationSlice.actions;
+export default authSlice.reducer;
+export const { setAuthUser } = authSlice.actions;

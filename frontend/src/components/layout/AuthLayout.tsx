@@ -18,8 +18,10 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import SupervisedUserCircle from "@mui/icons-material/SupervisedUserCircle";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { Menu, MenuItem } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../../store/store";
+import { setAuthUser } from "../../store/slices/authSlice";
 
 const drawerWidth = 240;
 
@@ -93,10 +95,14 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function AuthLayout() {
+  const dispatch: any = useAppDispatch();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [auth, setAuth] = React.useState(false);
+  const navigate = useNavigate();
   
+  let userToken = useAppSelector(
+    (state) => state.authSlice.userData.token
+  );
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -115,6 +121,13 @@ export default function AuthLayout() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+
+  const handleLogout = () =>{
+    localStorage.clear()
+    navigate("/")
+    dispatch(setAuthUser({}))
+  }
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -162,7 +175,7 @@ export default function AuthLayout() {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Logout</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </div>
         </Toolbar>
@@ -205,7 +218,7 @@ export default function AuthLayout() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {auth ? <Outlet/> : <Navigate to='/users'/> }
+        {userToken ? <Outlet/> : <Navigate to='/'/> }
       </Box>
     </Box>
   );

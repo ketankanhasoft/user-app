@@ -10,12 +10,11 @@ const userNotificationSlice = createSlice({
   name: "userNotificationSlice",
   initialState,
   reducers: {
-    addNotification: (state: any, { payload }) => {
-      state.userNotifications = { ...payload };
-    },
-    clearNotification: (state: any) => {
-      state.userNotifications = {};
-    },
+    addNotification: (state: any, { payload }) => ({
+      ...state,
+      userNotifications: payload,
+    }),
+    clearNotification: (state: any) => ({ ...state, userNotifications: {} }),
   },
 });
 

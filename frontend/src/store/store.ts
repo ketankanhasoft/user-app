@@ -3,10 +3,12 @@ import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import authSlice from "./slices/authSlice";
 import userNotificationSlice from "./slices/userNotificationSlice";
+import usersSlice from "./slices/usersSlice";
 
 const rootReducer = combineReducers({
   authSlice,
-  userNotificationSlice
+  userNotificationSlice,
+  usersSlice
 });
 
 const store = configureStore({

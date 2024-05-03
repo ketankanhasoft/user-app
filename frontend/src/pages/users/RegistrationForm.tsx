@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { TextField, Button, Grid } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import MySnackbar from "../../components/snackbar";
 import { addUserThunk, updateUserThunk } from "../../store/thunk/userThunk";
 import { useAppDispatch, useAppSelector } from "../../store/store";
@@ -25,10 +33,12 @@ interface Errors {
 
 interface Props {
   data: any;
+  handleCloseDialog: Function;
 }
 
-const RegistrationForm: React.FC<Props> = ({ data }) => {
+const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
   const dispatch = useAppDispatch();
+  let userToken = useAppSelector((state) => state.authSlice.userData.token);
   const [formData, setFormData] = useState<FormData>(
     data?.id
       ? data
@@ -52,7 +62,7 @@ const RegistrationForm: React.FC<Props> = ({ data }) => {
     password: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -62,16 +72,19 @@ const RegistrationForm: React.FC<Props> = ({ data }) => {
       if (formData?.id) {
         dispatch(
           updateUserThunk({
+            token: userToken,
             payload: formData,
           })
         );
       } else {
         dispatch(
           addUserThunk({
+            token: userToken,
             payload: formData,
           })
         );
       }
+      handleCloseDialog();
     }
   };
 
@@ -98,7 +111,7 @@ const RegistrationForm: React.FC<Props> = ({ data }) => {
       valid = false;
     }
 
-    if (!formData.password.trim()) {
+    if (!data?.id && !formData.password.trim()) {
       newErrors.password = "Password is required";
       valid = false;
     }
@@ -160,20 +173,27 @@ const RegistrationForm: React.FC<Props> = ({ data }) => {
           />
         </Grid>
         <Grid item sm={12} md={6}>
-          <TextField
-            fullWidth
-            label="Role"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-          />
+          <FormControl fullWidth>
+            <InputLabel id="role-label">Role</InputLabel>
+            <Select
+              labelId="role-label"
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              fullWidth
+            >
+              <MenuItem value="admin">Admin</MenuItem>
+              <MenuItem value="user">User</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
         <Grid item sm={12} md={6}>
           <TextField
             fullWidth
             label="Mobile"
             name="mobile"
-            type="tel"
+            type="number"
             value={formData.mobile}
             onChange={handleChange}
           />
@@ -189,18 +209,20 @@ const RegistrationForm: React.FC<Props> = ({ data }) => {
             onChange={handleChange}
           />
         </Grid>
-        <Grid item sm={12} md={6}>
-          <TextField
-            fullWidth
-            label="Password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            error={!!errors.password}
-            helperText={errors.password}
-          />
-        </Grid>
+        {!data?.id && (
+          <Grid item sm={12} md={6}>
+            <TextField
+              fullWidth
+              label="Password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              error={!!errors.password}
+              helperText={errors.password}
+            />
+          </Grid>
+        )}
         <Grid item xs={12}>
           <Button variant="contained" color="primary" type="submit">
             Submit
