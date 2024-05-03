@@ -1,3 +1,3 @@
 export default {
-	url: "http://192.168.1.14/",
+	url: process?.env?.REACT_APP_API_URL,
 };
